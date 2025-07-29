@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LaChispa - Lightning para todos</title>
+    <meta name="description" content="LaChispa hace Lightning Network tan fácil como encender una chispa. Pagos instantáneos con tu servidor favorito. Lightning para todos.">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="assets/images/lachispalogo_transparent.png">
+    <link rel="shortcut icon" type="image/png" href="assets/images/lachispalogo_transparent.png">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700@display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <!-- Particle System Canvas -->
+    <canvas id="sparks-canvas"></canvas>
+    
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <img src="assets/images/lachispalogo_transparent.png" alt="LaChispa" class="logo-img">
+                <h2 class="logo">LaChispa</h2>
+            </div>
+            <div class="nav-links">
+                <a href="#problema-solucion" class="nav-link">¿Por qué?</a>
+                <a href="#descarga" class="nav-link">Descarga</a>
+                <a href="#equipo" class="nav-link">Equipo</a>
+                <a href="https://github.com/Forte11Cuba/LaChispa" target="_blank" class="nav-link">
+                    <i class="fab fa-github"></i> GitHub
+                </a>
+                <div class="language-dropdown">
+                    <button class="language-btn" onclick="toggleLanguageDropdown()">
+                        ES <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="language-options" id="languageOptions">
+                        <a href="index.html" class="language-option active">
+                            <span class="flag">🇪🇸</span>
+                            <span>Español</span>
+                            <i class="fas fa-check"></i>
+                        </a>
+                        <a href="index-en.html" class="language-option">
+                            <span class="flag">🇺🇸</span>
+                            <span>English</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="hero" class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-title">LaChispa</h1>
+                <p class="hero-subtitle">Lightning para todos</p>
+                <ul class="hero-features">
+                    <li><i class="fas fa-bolt"></i> Tan fácil como encender una chispa</li>
+                    <li><i class="fas fa-stopwatch"></i> Pagos instantáneos</li>
+                    <li><i class="fas fa-cloud"></i> Con tu servidor favorito de LNbits</li>
+                </ul>
+                <div class="hero-buttons">
+                    <a href="#descarga" class="btn btn-primary">
+                        <i class="fas fa-download"></i>
+                        Descargar App
+                    </a>
+                    <a href="https://github.com/Forte11Cuba/LaChispa" target="_blank" class="btn btn-secondary">
+                        <i class="fab fa-github"></i>
+                        GitHub
+                    </a>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="phone-mockup">
+                    <div class="mock-particles"></div>
+                    <div class="screen-content">
+                        <!-- Main Screen -->
+                        <div class="mock-main-screen">
+                            <div class="mock-header">
+                                <div class="mock-menu-btn" onclick="showSettings()">☰</div>
+                                <div class="mock-title">LaChispa</div>
+                                <div class="mock-spark-btn">✨</div>
+                            </div>
+                            <div class="mock-user-info">
+                                <div class="mock-wallet-selector">
+                                    <span class="wallet-icon">💳</span>
+                                    <span class="wallet-name">LaChispa</span>
+                                    <span class="dropdown-arrow">▼</span>
+                                </div>
+                            </div>
+                            <div class="mock-balance-section">
+                                <div class="mock-balance-label">Saldo disponible</div>
+                                <div class="balance-row">
+                                    <div class="mock-balance-main" id="mockBalance">1,000,000 sats</div>
+                                    <div class="mock-balance-toggle" id="mockToggle" onclick="toggleMockBalance()">👁</div>
+                                </div>
+                            </div>
+                            <div class="mock-action-buttons">
+                                <div class="mock-send-btn">
+                                    <span>Enviar</span>
+                                    <span class="mock-arrow">↗</span>
+                                </div>
+                                <div class="mock-receive-btn">
+                                    <span class="mock-arrow">↘</span>
+                                    <span>Recibir</span>
+                                </div>
+                            </div>
+                            <div class="mock-bottom-nav">
+                                <div class="mock-history-btn" onclick="showHistory()">
+                                    <span>Historial</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- History Screen -->
+                        <div class="mock-history-screen" style="display: none;">
+                            <div class="mock-header">
+                                <div class="mock-back-btn" onclick="goBack()">←</div>
+                                <div class="mock-title">Historial</div>
+                                <div class="mock-refresh-btn" onclick="refreshHistory()">↻</div>
+                            </div>
+                            
+                            <div class="mock-filters">
+                                <div class="filter-chip active" data-filter="all" onclick="filterTransactions('all')">Todas</div>
+                                <div class="filter-chip" data-filter="incoming" onclick="filterTransactions('incoming')">Recibidas</div>
+                                <div class="filter-chip" data-filter="outgoing" onclick="filterTransactions('outgoing')">Enviadas</div>
+                                <div class="filter-chip" data-filter="pending" onclick="filterTransactions('pending')">Pendientes</div>
+                            </div>
+                            
+                            <div class="mock-transactions" id="mockTransactions">
+                                <!-- Transactions will be populated by JavaScript -->
+                            </div>
+                        </div>
+
+                        <!-- Settings Screen -->
+                        <div class="mock-settings-screen" style="display: none;">
+                            <div class="settings-header">
+                                <div class="back-button" onclick="goBackFromSettings()">
+                                    <i class="fas fa-arrow-left"></i>
+                                </div>
+                                <div class="settings-title">Configuración</div>
+                            </div>
+                            
+                            <div class="settings-content">
+                                <!-- User Section -->
+                                <div class="settings-section user-section">
+                                    <div class="user-row">
+                                        <div class="user-icon">
+                                            <div class="icon-container">
+                                                <i class="fas fa-user person-icon"></i>
+                                            </div>
+                                        </div>
+                                        <div class="user-info">
+                                            <div class="user-name" id="settingsUserName">Satoshi</div>
+                                            <div class="user-subtitle">lachispa.me</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Wallet Section -->
+                                <div class="settings-section wallet-section">
+                                    <div class="wallet-row">
+                                        <i class="fas fa-wallet wallet-icon"></i>
+                                        <div class="wallet-info-container" id="walletInfoContainer">
+                                            <div class="wallet-label">Billetera activa</div>
+                                            <div class="wallet-name" id="settingsWalletName">LNbits wallet</div>
+                                            <div class="wallet-balance" id="settingsWalletBalance">3903 sats</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Lightning Address Section -->
+                                <div class="lightning-address-section">
+                                    <div class="lightning-address-row">
+                                        <div class="lightning-address-icon">@</div>
+                                        <span class="lightning-address-text">Lightning Address</span>
+                                    </div>
+                                </div>
+
+                                <!-- About Section -->
+                                <div class="about-section">
+                                    <div class="about-row" onclick="showAboutModal()">
+                                        <div class="about-icon">
+                                            <i class="fas fa-info-circle"></i>
+                                        </div>
+                                        <span class="about-text">Acerca de</span>
+                                    </div>
+                                </div>
+
+                                <!-- Logout Section -->
+                                <div class="logout-section">
+                                    <button class="logout-button" onclick="showLogoutNotification()">
+                                        <i class="fas fa-sign-out-alt logout-icon"></i>
+                                        Cerrar sesión
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- About Modal -->
+                        <div class="about-modal-overlay" id="aboutModalOverlay" style="display: none;" onclick="closeAboutModal()">
+                            <div class="about-modal" onclick="event.stopPropagation()">
+                                <div class="modal-header">
+                                    <div class="modal-logo">
+                                        <img src="assets/images/lachispalogo_transparent.png" alt="LaChispa" class="modal-logo-img">
+                                        <h3>LaChispa</h3>
+                                    </div>
+                                </div>
+                                <div class="modal-content">
+                                    <h4 class="modal-subtitle">Billetera Lightning</h4>
+                                    <p class="modal-description">
+                                        LaChispa conecta a tu comunidad con su propio LNBits de forma simple, bella e intuitiva. 
+                                        Una interfaz moderna que hace Bitcoin Lightning accesible para todos, manteniendo la soberanía financiera.
+                                    </p>
+                                    <div class="version-badge">
+                                        Version: 0.0.1
+                                    </div>
+                                </div>
+                                <div class="modal-actions">
+                                    <button class="modal-close-btn" onclick="closeAboutModal()">Cerrar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Problema/Solución Section -->
+    <section id="problema-solucion" class="problem-solution">
+        <div class="container">
+            <h2 class="main-section-title" data-animate>¿Por qué LaChispa?</h2>
+            <div class="problems-grid stagger-container">
+                <div class="problem-card stagger-item">
+                    <div class="problem-icon"><i class="fas fa-times-circle"></i></div>
+                    <h3>Wallets Custodiales</h3>
+                    <p>No sabes quién controla tu dinero. Falta de transparencia y confianza ciega en terceros.</p>
+                </div>
+                <div class="problem-card stagger-item">
+                    <div class="problem-icon"><i class="fas fa-cog"></i></div>
+                    <h3>LNBits</h3>
+                    <p>Muy técnico para usuarios normales. Barrera de entrada alta para adopción masiva.</p>
+                </div>
+                <div class="solution-card stagger-item">
+                    <div class="solution-icon"><i class="fas fa-bolt"></i></div>
+                    <h3>LaChispa = Solución</h3>
+                    <p><strong>Tu LNBits + Interfaz intuitiva = Soberanía + Usabilidad</strong></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- Descarga Section -->
+    <section id="descarga" class="download">
+        <div class="container">
+            <h2 class="main-section-title" data-animate>Descarga LaChispa</h2>
+            <p class="download-subtitle">Disponible para todas las plataformas</p>
+            
+            <div class="download-buttons">
+                <a href="downloads/lachispa.apk" class="download-btn" download="lachispa.apk">
+                    <i class="fab fa-android"></i>
+                    <div>
+                        <span class="small">Descargar para</span>
+                        <span class="large">Android</span>
+                    </div>
+                </a>
+                <a href="#" class="download-btn">
+                    <i class="fab fa-linux"></i>
+                    <div>
+                        <span class="small">Descargar para</span>
+                        <span class="large">Linux</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Open Source Section -->
+    <section id="open-source" class="open-source">
+        <div class="container">
+            <h2 class="main-section-title" data-animate>Código Abierto & Transparente</h2>
+            <div class="opensource-content">
+                <div class="github-stats">
+                    <a href="https://github.com/Forte11Cuba/LaChispa" target="_blank" class="github-card">
+                        <i class="fab fa-github"></i>
+                        <div>
+                            <h3>LaChispa en GitHub</h3>
+                            <div class="stats">
+                                <span>Proyecto Open Source</span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <div class="social-links">
+                    <a href="https://primal.net/p/npub12pyw5pjcnv7u03em7c4963ytglnf2nwvdfx2p02kefalmugpntussnzyjv" target="_blank" class="social-link">
+                        <span class="nostr-icon"><img src="assets/images/nostr_logo_blk.svg" alt="Nostr"></span>
+                        Síguenos en Nostr
+                    </a>
+                    <a href="https://t.me/lachispame" target="_blank" class="social-link">
+                        <i class="fab fa-telegram"></i>
+                        Canal Telegram
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Equipo Section -->
+    <section id="equipo" class="team">
+        <div class="container">
+            <h2 class="main-section-title" data-animate>Equipo de Desarrollo</h2>
+            <div class="team-grid">
+                <div class="team-member">
+                    <div class="member-avatar">
+                        <img src="assets/images/forte11.jpg" alt="Forte11" class="member-photo">
+                    </div>
+                    <h3>Forte11</h3>
+                    <p class="member-role">Developer</p>
+                    <div class="member-links">
+                        <a href="https://github.com/Forte11Cuba" target="_blank" title="GitHub"><i class="fab fa-github"></i></a>
+                        <a href="https://x.com/Forte11Cuba" target="_blank" title="X"><span class="x-icon">𝕏</span></a>
+                        <a href="https://primal.net/p/npub1f0rtesc8yd8utjhpgktlltv4t2rftxd5kmkagt5kymt8946pqf7qe90snx" target="_blank" title="Nostr"><span class="nostr-icon"><img src="assets/images/nostr_logo_blk.svg" alt="Nostr"></span></a>
+                    </div>
+                </div>
+                <div class="team-member">
+                    <div class="member-avatar">
+                        <img src="assets/images/bitalion.jpg" alt="Bitalion" class="member-photo">
+                    </div>
+                    <h3>Bitalion</h3>
+                    <p class="member-role">DevOps Engineer</p>
+                    <div class="member-links">
+                        <a href="https://github.com/bitalion" target="_blank" title="GitHub"><i class="fab fa-github"></i></a>
+                        <a href="https://x.com/bitalion" target="_blank" title="X"><span class="x-icon">𝕏</span></a>
+                        <a href="https://primal.net/p/npub1f3fvhppwgh00u2r0kq320avr984wf6wrupm6f98m4nyqfk0s28dqq03ny6" target="_blank" title="Nostr"><span class="nostr-icon"><img src="assets/images/nostr_logo_blk.svg" alt="Nostr"></span></a>
+                    </div>
+                </div>
+                <div class="team-member">
+                    <div class="member-avatar">
+                        <img src="assets/images/catrya.jpg" alt="Catrya" class="member-photo">
+                    </div>
+                    <h3>Catrya</h3>
+                    <p class="member-role">Product Manager</p>
+                    <div class="member-links">
+                        <a href="https://github.com/catrya" target="_blank" title="GitHub"><i class="fab fa-github"></i></a>
+                        <a href="https://x.com/catry_a" target="_blank" title="X"><span class="x-icon">𝕏</span></a>
+                        <a href="https://primal.net/p/npub1catrya6c7rdnny0useday5ftxq9ycl5vt7c880zzmfwnpn58urgq6neuhz" target="_blank" title="Nostr"><span class="nostr-icon"><img src="assets/images/nostr_logo_blk.svg" alt="Nostr"></span></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <div class="footer-logo">
+                        <img src="assets/images/lachispalogo_transparent.png" alt="LaChispa" class="footer-logo-img">
+                        <h3>LaChispa</h3>
+                    </div>
+                    <p>Lightning para todos</p>
+                </div>
+                <div class="footer-links">
+                    <div class="footer-column">
+                        <h4>Producto</h4>
+                        <a href="#descarga">Descarga</a>
+                        <a href="#equipo">Equipo</a>
+                    </div>
+                    <div class="footer-column">
+                        <h4>Comunidad</h4>
+                        <a href="https://github.com/Forte11Cuba/LaChispa" target="_blank">GitHub</a>
+                        <a href="https://primal.net/p/npub12pyw5pjcnv7u03em7c4963ytglnf2nwvdfx2p02kefalmugpntussnzyjv" target="_blank">Nostr</a>
+                        <a href="https://t.me/lachispame" target="_blank">Telegram</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 LaChispa. Código abierto y soberano.</p>
+            </div>
+        </div>
+    </footer>
+
+
+    <!-- JavaScript -->
+    <script src="js/particles.js"></script>
+    <script src="js/animations.js"></script>
+    <script>
+        // Initialize particles and animations
+        document.addEventListener('DOMContentLoaded', function() {
+            initParticles();
+            populateTransactions();
+            
+            // Close language dropdown when clicking outside
+            document.addEventListener('click', function(event) {
+                const dropdown = document.querySelector('.language-dropdown');
+                if (!dropdown.contains(event.target)) {
+                    dropdown.classList.remove('active');
+                }
+            });
+        });
+
+        // Language dropdown toggle
+        function toggleLanguageDropdown() {
+            const dropdown = document.querySelector('.language-dropdown');
+            dropdown.classList.toggle('active');
+        }
+
+        // Mock balance toggle functionality
+        let mockBalanceVisible = true;
+        const mockBalanceValue = '1,000,000 sats';
+
+        function toggleMockBalance() {
+            const balanceElement = document.getElementById('mockBalance');
+            const toggleElement = document.getElementById('mockToggle');
+            
+            mockBalanceVisible = !mockBalanceVisible;
+            
+            if (mockBalanceVisible) {
+                balanceElement.textContent = mockBalanceValue;
+                toggleElement.textContent = '👁';
+                toggleElement.style.color = 'rgba(255, 255, 255, 0.6)';
+            } else {
+                balanceElement.textContent = '••• sats';
+                toggleElement.textContent = '🙈';
+                toggleElement.style.color = 'rgba(255, 255, 255, 0.8)';
+            }
+            
+            // Add a small animation effect
+            balanceElement.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                balanceElement.style.transform = 'scale(1)';
+            }, 150);
+        }
+
+        // Fake transaction data
+        const fakeTransactions = [
+            { type: 'outgoing', description: 'Recarga Etec...', amount: '-25000 sats', time: 'Today 05:30', icon: '↗', color: '#ff6b35' },
+            { type: 'incoming', description: 'LaChispa', amount: '+21212121 sats', time: 'Today 07:11', icon: '↘', color: '#4caf50' },
+            { type: 'outgoing', description: 'Isidro...', amount: '+2020 sats', time: 'Today 11:27', icon: '↗', color: '#ff6b35' },
+            { type: 'outgoing', description: 'malecon...', amount: '+1994 sats', time: 'Yesterday 08:05', icon: '↗', color: '#ff6b35' },
+            { type: 'outgoing', description: 'Orwell...', amount: '-1984 sats', time: 'Yesterday 06:08', icon: '↗', color: '#ff6b35' },
+            { type: 'incoming', description: 'Lightning Address...', amount: '-1959 sats', time: 'Yesterday 01:01', icon: '↘', color: '#4caf50' }
+        ];
+
+        let currentFilter = 'all';
+
+        // Navigation functions
+        function showHistory() {
+            const mainScreen = document.querySelector('.mock-main-screen');
+            const historyScreen = document.querySelector('.mock-history-screen');
+            
+            mainScreen.style.opacity = '0';
+            setTimeout(() => {
+                mainScreen.style.display = 'none';
+                historyScreen.style.display = 'block';
+                historyScreen.style.opacity = '0';
+                setTimeout(() => {
+                    historyScreen.style.opacity = '1';
+                }, 50);
+            }, 150);
+        }
+
+        function showSettings() {
+            const mainScreen = document.querySelector('.mock-main-screen');
+            const settingsScreen = document.querySelector('.mock-settings-screen');
+            
+            mainScreen.style.opacity = '0';
+            setTimeout(() => {
+                mainScreen.style.display = 'none';
+                settingsScreen.style.display = 'block';
+                settingsScreen.style.opacity = '0';
+                setTimeout(() => {
+                    settingsScreen.style.opacity = '1';
+                }, 50);
+            }, 150);
+        }
+
+        function goBack() {
+            const mainScreen = document.querySelector('.mock-main-screen');
+            const historyScreen = document.querySelector('.mock-history-screen');
+            
+            historyScreen.style.opacity = '0';
+            setTimeout(() => {
+                historyScreen.style.display = 'none';
+                mainScreen.style.display = 'block';
+                mainScreen.style.opacity = '0';
+                setTimeout(() => {
+                    mainScreen.style.opacity = '1';
+                }, 50);
+            }, 150);
+        }
+
+        function goBackFromSettings() {
+            const mainScreen = document.querySelector('.mock-main-screen');
+            const settingsScreen = document.querySelector('.mock-settings-screen');
+            
+            // Fade out settings screen
+            settingsScreen.style.opacity = '0';
+            setTimeout(() => {
+                settingsScreen.style.display = 'none';
+                // Show main screen
+                mainScreen.style.display = 'block';
+                mainScreen.style.opacity = '0';
+                setTimeout(() => {
+                    mainScreen.style.opacity = '1';
+                }, 50);
+            }, 150);
+        }
+
+        // Filter transactions
+        function filterTransactions(filterType) {
+            currentFilter = filterType;
+            
+            // Update active filter chip
+            document.querySelectorAll('.filter-chip').forEach(chip => {
+                chip.classList.remove('active');
+            });
+            document.querySelector(`[data-filter="${filterType}"]`).classList.add('active');
+            
+            // Update transactions display
+            populateTransactions();
+        }
+
+        // Populate transactions based on current filter
+        function populateTransactions() {
+            const container = document.getElementById('mockTransactions');
+            if (!container) return;
+            
+            let filteredTransactions = fakeTransactions;
+            
+            switch (currentFilter) {
+                case 'incoming':
+                    filteredTransactions = fakeTransactions.filter(tx => tx.amount.startsWith('+'));
+                    break;
+                case 'outgoing':
+                    filteredTransactions = fakeTransactions.filter(tx => tx.amount.startsWith('-'));
+                    break;
+                case 'pending':
+                    filteredTransactions = fakeTransactions.filter(tx => tx.status === 'pending');
+                    break;
+                case 'all':
+                default:
+                    filteredTransactions = fakeTransactions;
+            }
+            
+            if (filteredTransactions.length === 0) {
+                container.innerHTML = `
+                    <div class="mock-no-transactions">
+                        <div class="no-tx-icon">📋</div>
+                        <div class="no-tx-text">No hay transacciones</div>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = filteredTransactions.map(transaction => {
+                // Determine actual type based on amount sign
+                const isIncoming = transaction.amount.startsWith('+');
+                const icon = isIncoming ? '↘' : '↗';
+                const color = isIncoming ? '#4caf50' : '#ff6b35';
+                
+                return `
+                    <div class="mock-transaction-item">
+                        <div class="mock-tx-icon" style="color: ${color};">
+                            ${icon}
+                        </div>
+                        <div class="mock-tx-info">
+                            <div class="mock-tx-main">
+                                <span class="mock-tx-description">${transaction.description}</span>
+                                <span class="mock-tx-amount" style="color: ${color};">${transaction.amount}</span>
+                            </div>
+                            <div class="mock-tx-time">${transaction.time}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Refresh history (simulate)
+        function refreshHistory() {
+            const refreshBtn = document.querySelector('.mock-refresh-btn');
+            refreshBtn.style.transform = 'rotate(0deg)';
+            refreshBtn.style.transition = 'transform 0.5s ease';
+            
+            setTimeout(() => {
+                refreshBtn.style.transform = 'rotate(360deg)';
+            }, 50);
+            
+            setTimeout(() => {
+                refreshBtn.style.transform = 'rotate(0deg)';
+                refreshBtn.style.transition = '';
+                populateTransactions();
+            }, 550);
+        }
+
+        // Mock data for development/testing (following Chispa specifications)
+        const mockAppData = {
+            currentUser: "Satoshi",
+            currentServer: "https://lachispa.me",
+            primaryWallet: {
+                name: "LNbits wallet", 
+                balanceFormatted: "3903 sats"
+            }
+        };
+
+        // Utility function to extract domain from URL
+        function extractDomain(url) {
+            try {
+                const urlObj = new URL(url);
+                return urlObj.hostname;
+            } catch (e) {
+                return url.replace(/https?:\/\//, '');
+            }
+        }
+
+        // Initialize settings data when settings screen is shown
+        function initializeSettingsData() {
+            // Update user name
+            const userNameElement = document.getElementById('settingsUserName');
+            if (userNameElement) {
+                userNameElement.textContent = mockAppData.currentUser || 'Usuario';
+            }
+
+            // Update wallet information
+            const walletNameElement = document.getElementById('settingsWalletName');
+            const walletBalanceElement = document.getElementById('settingsWalletBalance');
+            
+            if (mockAppData.primaryWallet) {
+                if (walletNameElement) {
+                    walletNameElement.textContent = mockAppData.primaryWallet.name;
+                }
+                if (walletBalanceElement) {
+                    walletBalanceElement.textContent = mockAppData.primaryWallet.balanceFormatted;
+                }
+            } else {
+                // Handle no wallet state - using proper styling
+                const walletContainer = document.getElementById('walletInfoContainer');
+                if (walletContainer) {
+                    walletContainer.innerHTML = `
+                        <div style="
+                            border: 2px solid #ff6b35; 
+                            background: rgba(255, 107, 53, 0.1); 
+                            border-radius: 6px; 
+                            padding: 8px;
+                            text-align: center;
+                        ">
+                            <div style="color: #ff6b35; font-size: 7px; font-weight: 600; margin-bottom: 4px;">
+                                ⚠️ Sin billetera
+                            </div>
+                            <div style="color: rgba(255, 255, 255, 0.7); font-size: 6px;">
+                                Configura una billetera
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+        }
+
+        // Corrected settings navigation - fullscreen implementation
+        function showSettings() {
+            const mainScreen = document.querySelector('.mock-main-screen');
+            const historyScreen = document.querySelector('.mock-history-screen');
+            const settingsScreen = document.querySelector('.mock-settings-screen');
+            
+            // Hide any currently active screen
+            if (mainScreen) mainScreen.style.display = 'none';
+            if (historyScreen) historyScreen.style.display = 'none';
+            
+            // Show settings screen fullscreen
+            settingsScreen.style.display = 'block';
+            settingsScreen.style.opacity = '0';
+            
+            // Initialize settings data
+            initializeSettingsData();
+            
+            // Simple fade-in
+            setTimeout(() => {
+                settingsScreen.style.opacity = '1';
+            }, 50);
+        }
+
+        // About modal functionality
+        function showAboutModal() {
+            const modal = document.getElementById('aboutModalOverlay');
+            if (modal) {
+                modal.style.display = 'flex';
+                // Prevent body scroll when modal is open
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        function closeAboutModal() {
+            const modal = document.getElementById('aboutModalOverlay');
+            if (modal) {
+                modal.style.display = 'none';
+                // Restore body scroll
+                document.body.style.overflow = '';
+            }
+        }
+
+        // Server change notification (placeholder functionality)
+        function showServerChangeNotification() {
+            // Create and show a temporary notification
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: rgba(255, 255, 255, 0.08);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                border-radius: 12px;
+                padding: 16px 20px;
+                color: white;
+                font-family: 'Inter', sans-serif;
+                font-size: 14px;
+                backdrop-filter: blur(20px);
+                box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+                z-index: 10001;
+                animation: slideIn 0.3s ease-out;
+            `;
+            notification.textContent = '🔄 Función de cambio de servidor próximamente';
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'fadeOut 0.3s ease-out';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+
+        // Help notification (placeholder functionality)
+        function showHelpNotification() {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: rgba(255, 255, 255, 0.08);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                border-radius: 12px;
+                padding: 16px 20px;
+                color: white;
+                font-family: 'Inter', sans-serif;
+                font-size: 14px;
+                backdrop-filter: blur(20px);
+                box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+                z-index: 10001;
+                animation: slideIn 0.3s ease-out;
+            `;
+            notification.textContent = '❓ Centro de ayuda próximamente';
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'fadeOut 0.3s ease-out';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+
+        // Logout notification (placeholder functionality)
+        function showLogoutNotification() {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: rgba(220, 53, 69, 0.9);
+                border: 1px solid rgba(220, 53, 69, 0.5);
+                border-radius: 12px;
+                padding: 16px 20px;
+                color: white;
+                font-family: 'Inter', sans-serif;
+                font-size: 14px;
+                backdrop-filter: blur(20px);
+                box-shadow: 0 8px 16px rgba(220, 53, 69, 0.3);
+                z-index: 10001;
+                animation: slideIn 0.3s ease-out;
+            `;
+            notification.textContent = '🚪 Función de cerrar sesión próximamente';
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'fadeOut 0.3s ease-out';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+
+        // Add fadeOut animation for notifications
+        const notificationStyles = `
+            @keyframes fadeOut {
+                from { opacity: 1; transform: translateX(0); }
+                to { opacity: 0; transform: translateX(20px); }
+            }
+        `;
+        
+        // Inject notification styles
+        if (!document.querySelector('#notification-styles')) {
+            const styleSheet = document.createElement('style');
+            styleSheet.id = 'notification-styles';
+            styleSheet.textContent = notificationStyles;
+            document.head.appendChild(styleSheet);
+        }
+
+        // Keyboard accessibility for modal
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                const modal = document.getElementById('aboutModalOverlay');
+                if (modal && modal.style.display === 'flex') {
+                    closeAboutModal();
+                }
+            }
+        });
+    </script>
+</body>
+</html>
