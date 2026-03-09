@@ -15,8 +15,8 @@ RUN rm /etc/nginx/conf.d/default.conf
 # Copy nginx config
 COPY docker/nginx.conf /etc/nginx/conf.d/
 
-# Copy static files
-COPY --chown=appuser:appuser . /usr/share/nginx/html/
+# Copy static files from public/ directory
+COPY --chown=appuser:appuser public/ /usr/share/nginx/html/
 
 WORKDIR /usr/share/nginx/html
 

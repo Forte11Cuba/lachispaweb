@@ -1,6 +1,8 @@
 version: '3.8'
 
 services:
+  # Production HTTP service (static files from public/ directory)
+  # Run with: docker compose --profile production up web
   web:
     build:
       context: ..
@@ -8,9 +10,10 @@ services:
     ports:
       - "80:80"
     volumes:
-      - ../:/usr/share/nginx/html:ro
       - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
     restart: unless-stopped
+    profiles:
+      - production
     healthcheck:
       test: ["CMD", "wget", "-q", "--spider", "http://localhost/"]
       interval: 30s
@@ -18,7 +21,8 @@ services:
       retries: 3
       start_period: 10s
 
-  # Development service (live reload)
+  # Development service (live reload, static files from public/ directory)
+  # Run with: docker compose --profile dev up dev
   dev:
     build:
       context: ..
@@ -26,18 +30,22 @@ services:
     ports:
       - "8080:80"
     volumes:
-      - ../:/usr/share/nginx/html
+      - ../public:/usr/share/nginx/html
     restart: unless-stopped
+    profiles:
+      - dev
 
-  # Production service with HTTPS support
+  # Production HTTPS service (static files from public/ directory)
+  # Run with: docker compose --profile production up production
   production:
     build:
       context: ..
       dockerfile: docker/Dockerfile
     ports:
-      - "80:80"
       - "443:443"
     volumes:
       - ./ssl:/etc/nginx/ssl:ro
       - ./nginx-ssl.conf:/etc/nginx/conf.d/default.conf:ro
     restart: unless-stopped
+    profiles:
+      - production
